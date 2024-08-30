@@ -38,15 +38,20 @@ class RIGFlow(base.Flow):
       self,
       llm: base.LLM,
       data_fetcher: datacommons.DataCommons,
+      annotator_llm: base.LLM = None,
       verbose: bool = True,
       in_context: bool = False,
       validate_dc_responses: bool = False,
   ):
     self.llm = llm
+    self.annotator_llm = annotator_llm
     self.data_fetcher = data_fetcher
     self.options = base.Options(verbose=verbose)
     self.in_context = in_context
     self.validate_dc_responses = validate_dc_responses
+    assert (
+        not self.in_context or self.annotator_llm
+    ), '--in_context requires annotator_llm!'
 
   def query(
       self,
@@ -54,20 +59,27 @@ class RIGFlow(base.Flow):
   ) -> base.FlowResponse:
 
     if self.in_context:
-      self.options.vlog('... [RIG] Calling UNTUNED Model')
-      prompt = prompts.RIG_IN_CONTEXT_PROMPT
-      llm_resp = self.llm.query(prompt.format(sentence=query))
+      self.options.vlog('... [RIG] Calling UNTUNED BASE Model for answer')
+      llm_resp = self.llm.query(query)
+      llm_calls = [llm_resp]
+      if llm_resp.response:
+        self.options.vlog('... [RIG] Calling LARGE Model for annotation')
+        prompt = prompts.RIG_IN_CONTEXT_PROMPT
+        llm_resp = self.annotator_llm.query(
+            prompt.format(text=llm_resp.response)
+        )
+        llm_calls.append(llm_resp)
     else:
       self.options.vlog('... [RIG] Calling FINETUNED Model')
       llm_resp = self.llm.query(query)
+      llm_calls = [llm_resp]
     if not llm_resp.response:
       logging.error('FAILED: %s', query)
-      return base.FlowResponse(llm_calls=[llm_resp])
+      return base.FlowResponse(llm_calls=llm_calls)
 
     # Make DC calls.
     llm_text = llm_resp.response
     q2llmval, q2resp, dc_duration = self._call_dc(llm_text)
-    llm_calls = [llm_resp]
 
     # Sanity check DC call and response using LLM, and keep only the "good"
     # ones.
