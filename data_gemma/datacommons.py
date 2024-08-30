@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Data Commons."""
 
 import concurrent.futures
@@ -24,14 +23,16 @@ import requests
 from data_gemma import base
 from data_gemma import utils
 
-
 _BASE_URL = 'https://{env}.datacommons.org/nodejs/query'
 
-# Do not allow topics, use higher threshold (0.8).
-_POINT_PARAMS = 'allCharts=1&mode=toolformer_rig&idx=base_uae_mem'
+_POINT_MODE = 'toolformer_rig'
+_TABLE_MODE = 'toolformer_rag'
 
-# Allow topics, use lower threshold (0.7)
-_TABLE_PARAMS = 'mode=toolformer_rag&client=table&idx=base_uae_mem'
+# Do not allow topics, use higher threshold (0.8).
+_POINT_PARAMS = f'allCharts=1&mode={_POINT_MODE}&idx=base_uae_mem'
+
+# Allow topics, use lower threshold (0.7).
+_TABLE_PARAMS = f'mode={_TABLE_MODE}&client=table&idx=base_uae_mem'
 
 
 class DataCommons:
@@ -42,7 +43,7 @@ class DataCommons:
       api_key: str,
       verbose: bool = True,
       num_threads: int = 10,
-      env: str = 'dev',
+      env: str = 'datagemma',
       session: requests.Session | None = None,
   ):
     self.options = base.Options(verbose=verbose)
@@ -82,6 +83,8 @@ class DataCommons:
     score = svm.get('CosineScore', [-1])[0]
     var = svm.get('SV', [''])[0]
     url = chart.get('dcUrl', '')
+    if url:
+      url += f'&mode={_POINT_MODE}'
     return base.DataCommonsCall(
         query=query,
         val=v,
@@ -127,6 +130,8 @@ class DataCommons:
     score = svm.get('CosineScore', [-1])[0]
     var = svm.get('SV', [''])[0]
     url = chart.get('dcUrl', '')
+    if url:
+      url += f'&mode={_TABLE_MODE}'
     return base.DataCommonsCall(
         query=query,
         unit=u,

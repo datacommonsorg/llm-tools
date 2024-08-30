@@ -14,6 +14,8 @@
 
 """List of all prompts used in Data Gemma."""
 
+# TODO: Unify this with RIG_IN_CONTEXT_PROMPT.  No reason why this should be
+# different, and include the "question"
 RIO_IN_CONTEXT_PROMPT = """
 Your task is to annotate every statistic in the given text with a `__DC__`
 query that can retrieve the statistic.  The query should be about metrics
@@ -63,117 +65,44 @@ OUTPUT:
 
 
 RIG_IN_CONTEXT_PROMPT = """
-Help me prepare a training set for the purpose of fine tuning an LLM with the
-intent of looking up recent statistical facts from a knowledge base.
+Your task is to annotate every statistic in the given text with a `__DC__`
+query that can retrieve the statistic.  The query should be about metrics
+on topics like demographics, economy, education, health, and so on that are
+associated with geographical places (like USA, California, Miami, etc.).
 
-Specifically, I want you to attempt responding to question normally in a few
-paragraphs, using data and numbers when necessary.  You MUST annotate the
-sub-strings representing the numbers and statistics with questions asked to the
-Data Commons API. The responses to those questions from Data Commons should help
-fill in the accurate numeric value.
+Concretely, every occurrence of a statistical value for a metric in a place
+should be replaced with `[__DC__("query") --> "stat"]`, where "query"
+must include a metric, a place name and optional date. And "stat" is the
+statistical value that originally occurred in the text.  Do not annotate
+values that are dates ("founded in 1760") and ranks ("10th largest by area").
 
-Every intended occurrence of a numeric fact should be annotated with
-`[__DC__("question") --> "answer"]`, where "question" is the question to
-the Knowledge Base, and "answer" is a numeric fact with units.
+The `__DC__()` calls MUST be in place of the statistical value in the text.
+And DO NOT modify sentences that have no statistical data.
 
-Below are a couple of examples.
+Below is an example of an INPUT and the corresponding annotated OUTPUT.
 
-### Example 1 ###
+INPUT:
 
-```
-Question:  Tell me about health outcomes in California
+California is 1st as the nation's most populous state, with about 39 million people in 2020.
+In San Francisco, the diabetes rate is 9.2 cases per 10000 people.
+San Francisco and the surrounding San Francisco Bay Area are a global center of economic activity and the arts and sciences.
+In 1861, Alabama seceded from the United States to become part of the Confederate States of America.
+As of 2022, the United States receives approximately 81% of its energy from fossil fuel and the largest source of the country's energy came from petroleum (35.8%), followed by natural gas (33.4%) and renewable sources (13.3%).
 
-Answer:
-California's health landscape, much like its diverse geography, showcases
-contrasting realities. While boasting pockets of excellence, stark disparities
-paint a complex picture. Let's delve into the data:
+OUTPUT:
 
-Strengths:
+California is 1st as the nation's most populous state, with about [__DC__("what was the population of california in 2020?") --> "39 million"] people.
+In San Francisco, the diabetes rate is [__DC__("what is the prevalence of diabetes in San Francisco?") --> "9.2 cases per 10000 people"].
+San Francisco and the surrounding San Francisco Bay Area are a global center of economic activity and the arts and sciences.
+In 1861, Alabama seceded from the United States to become part of the Confederate States of America.
+As of 2022, the United States receives approximately [__DC__("what percentage of energy in the United States comes from fossil fuels in 2022?") --> "81%"] of its energy from fossil fuel and the largest source of the country's energy came from petroleum ([__DC__("what percentage of energy in the United States comes from petroleum in 2022?") --> "35.8%"]), followed by natural gas ([__DC__("what percentage of energy in the United States comes from natural gas in 2022?") --> "33.4%"]) and renewable sources ([__DC__("what percentage of energy in the United States comes from renewable sources in 2022?") --> "13.3%"]).
 
-* Longevity: Californians enjoy a high life expectancy of [__DC__("What is the life expectancy in California?") --> "81 years"], exceeding the national average.
-* Healthy Habits: Low smoking rates ([__DC__("What is the prevalence of smoking in California?") --> "5%"]) and obesity prevalence ([__DC__("What is the prevalence of obesity in California?") --> "23.3%"]) contribute to better health outcomes.
-* Safety: Violent crime has significantly decreased ([__DC__("How much has violent crime reduced in California since 1990?") --> "54%"] since 1990), creating safer communities.
-* Investment: California spends the most per capita on healthcare nationally, indicating commitment to health.
+INPUT:
 
-Challenges:
+{text}
 
-* Inequities: The picture darkens when considering racial and ethnic disparities.
-  * Black Californians have the lowest life expectancy ([__DC__("What is the life expectancy of black people in California?") --> "75.1 years"]), significantly lower than Asians ([__DC__("What is the life expectancy of asian people in California?") --> "86.3 years"]).
-  * Communities of color experience higher rates of chronic diseases, premature death, and limited healthcare access.
-* Access: Despite high spending, [__DC__("What is the percentage of uninsured population in California?") --> "7.1%"] of residents remain uninsured, exceeding the national average.
-* Environment: Air pollution, especially in urban areas, poses a major health risk.
-  * Droughts and wildfires are becoming increasingly frequent, impacting mental and physical well-being.
+OUTPUT:
 
-Moving forward:
-
-* Bridging the healthcare gap: Expanding access to quality care, particularly in underserved communities, is crucial.
-* Addressing social determinants: Tackling poverty, education inequality, and poor housing conditions holds the key to lasting change.
-* Environmental protection: Combating air pollution and mitigating the effects of climate change are essential for future health.
-
-California's journey towards a healthier future requires acknowledging and addressing these contrasting realities.
-By closing the gap between its strengths and challenges, the Golden State can ensure a brighter future for all its residents, regardless of background or zip code.
-```
-
-### Example 2 ###
-
-```
-Question: Tell me about the education system in New York state and the overall school districts. Also, how does it compare with other regions in the US?
-Answer:  New York State's education system is a complex and diverse landscape, encompassing over [__DC__("How many schools districts are there in New York state?") --> "700"] school districts and serving nearly [__DC__("How many students are served by the schools districts in New York state?") --> "2.5 million"] students. To provide a comprehensive overview, let's delve into key aspects and compare them with national averages:
-
-Funding:
-
-* New York ranks among the top states in terms of education spending, with an average expenditure of [__DC__("What is the average education spending per pupil in New York?") --> "$23,000"] per pupil, significantly higher than the national average of [__DC__("What is the average education spending per pupil in the US?") --> "$12,000"].
-
-Student Performance:
-
-* New York students consistently perform above the national average on standardized tests. In 2019, [__DC__("What percentage of New York students are proficient in math in 2019?") --> "62%"] of students were proficient in math, compared to the national average of [__DC__("What percentage of US students are proficient in math in 2019?") --> "37%"].
-* Similarly, [__DC__("What percentage of New York students are proficient in reading?") --> "66%"] of students were proficient in reading, exceeding the national average of [__DC__("What percentage of US students are proficient in reading?") --> "35%"].
-
-Graduation Rates:
-
-* New York's graduation rate has steadily increased over the past decade, reaching [__DC__("What is the graduation rate in New York in 2019?") --> "85%"] in 2019. This surpasses the national average of [__DC__("What is the graduation rate in the US?") --> "84%"].
-
-Teacher Quality:
-
-* New York has a rigorous teacher certification process, ensuring that educators meet high standards. The state also invests in professional development opportunities for teachers, contributing to their effectiveness.
-
-Challenges:
-
-* Despite these strengths, New York faces challenges, including persistent achievement gaps between different student groups and a shortage of qualified teachers in certain subjects.
-
-Comparison with Other Regions:
-
-* New York's education system compares favorably with other regions in the US. Its funding levels, student performance, and graduation rates are generally higher than the national average.
-* However, there is still room for improvement, particularly in addressing equity issues and ensuring that all students have access to high-quality education.
-
-Overall, New York State's education system is well-funded and produces strong student outcomes. While there are challenges to address, the state's commitment to education and its students is evident.
-```
-
-### Caveats ###
-
-AVOID the following bugs in your annotated responses.
-
-1. Do not annotate dates. For example:
-
-`In 2019, India saw wet bulb temperatures reach [__DC__("What was the max wet bulb temperature in 2019 in India?") --> "37 degrees Celsius"].`
-
-2. Do not skip place names from the main text, even if they are included in the "question".  For example:
-
-`Life expectancy at birth has increased significantly in many African countries. For example, in Nigeria, life expectancy has increased from [__DC__("What was the life expectancy in Nigeria in 2000?") --> "46.6 years"] to [__DC__("What is the current life expectancy in Nigeria?") --> "55.4 years"].`
-
-3. Do not skip dates from the main text.  For example:
-
-`By 2050, an estimated [__DC__("How many people in Europe will be affected by coastal flooding by 2100?") --> "3 million"] people in Europe will be affected by coastal flooding annually.`
-
-4. Do not repeat stats or other words that appear in the "answer" again in the main text.  For example:
-
-`By 2000, the widowed population in San Francisco had grown to [__DC__("What was the widowed population in San Francisco in 2020?") --> "70,000 people"].`
-
-
-### Answer this question ###
-
-Question: {sentence}
-Answer:
 """
 
 
