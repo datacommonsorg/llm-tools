@@ -12,14 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Build and distribute the data_gemma package."""
-import os
 from setuptools import setup
-
 
 # Package metadata.
 NAME = 'data_gemma'
 DESCRIPTION = 'A library to integrate with Data Gemma models and Data Commons.'
-URL = 'https://github.com/datacommonsorg/api-python'
+URL = 'https://github.com/datacommonsorg/llm-tools'
 EMAIL = 'support@datacommons.org'
 AUTHOR = 'datacommons.org'
 REQUIRES_PYTHON = '>=3.10'
