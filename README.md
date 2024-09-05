@@ -20,5 +20,6 @@ To install the library, run:
 pip install git+https://github.com/datacommonsorg/llm-tools
 ```
 
-To see examples of using this library, can check out our Colab notebooks for [RIG](https://github.com/datacommonsorg/llm-tools/blob/main/notebooks/data_gemma_rig.ipynb)
-and [RAG](https://github.com/datacommonsorg/llm-tools/blob/main/notebooks/data_gemma_rag.ipynb).
+For examples of using this library, see our Colab notebooks for [RIG](https://github.com/datacommonsorg/llm-tools/blob/main/notebooks/data_gemma_rig.ipynb)
+and
+[RAG](https://github.com/datacommonsorg/llm-tools/blob/main/notebooks/data_gemma_rag.ipynb).
