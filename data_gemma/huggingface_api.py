@@ -37,7 +37,7 @@ class HFPipeline(base.LLM):
     self.options.vlog(f'... calling HF Pipeline API "{prompt[:50].strip()}..."')
 
     start = time.time()
-    outputs = self.pipeline(prompt, max_new_tokens=MAX_NEW_TOKENS)
+    outputs = self.pipeline(prompt, max_new_tokens=MAX_NEW_TOKENS, return_full_text=False)
     t = round(time.time() - start, 3)
 
     ans = ''
