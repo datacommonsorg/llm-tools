@@ -76,15 +76,15 @@ class HFBasic(base.LLM):
     self.options.vlog(f'... calling HF Pipeline API "{prompt[:50].strip()}..."')
 
     start = time.time()
-    inputs = self.tokenizer(prompt, return_tensors='pt')
+    inputs = self.tokenizer(prompt, return_tensors='pt').to('cuda')
+    input_ids = inputs['input_ids']
     outputs = self.model.generate(**inputs, max_new_tokens=MAX_NEW_TOKENS)
 
     ans = ''
     err = ''
     try:
-      ans = self.tokenizer.batch_decode(outputs[:,
-                                                inputs['input_ids'].shape[1]:],
-                                        skip_special_tokens=True)
+      ans = self.tokenizer.batch_decode(outputs[:, input_ids.shape[1]:],
+                                        skip_special_tokens=True)[0]
     except Exception as e:
       err = str(e)
       logging.warning(err)
