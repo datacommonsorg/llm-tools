@@ -11,10 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""HF Pipeline API based LLM Interface.
-
-For example usage, see: https://huggingface.co/google/gemma-2-27b
-"""
+"""HF Pipeline API based LLM Interface."""
 
 import logging
 import time
@@ -22,7 +19,7 @@ from typing import Any
 
 from data_gemma import base
 
-MAX_NEW_TOKENS = 1024
+MAX_NEW_TOKENS = 4096
 
 
 class HFPipeline(base.LLM):
@@ -79,13 +76,15 @@ class HFBasic(base.LLM):
     self.options.vlog(f'... calling HF Pipeline API "{prompt[:50].strip()}..."')
 
     start = time.time()
-    input_ids = self.tokenizer(prompt, return_tensors='pt').to('cuda')
-    outputs = self.model.generate(**input_ids, max_new_tokens=4096)
+    inputs = self.tokenizer(prompt, return_tensors='pt').to('cuda')
+    input_ids = inputs['input_ids']
+    outputs = self.model.generate(**inputs, max_new_tokens=MAX_NEW_TOKENS)
 
     ans = ''
     err = ''
     try:
-      ans = self.tokenizer.decode(outputs[0])
+      ans = self.tokenizer.batch_decode(outputs[:, input_ids.shape[1]:],
+                                        skip_special_tokens=True)[0]
     except Exception as e:
       err = str(e)
       logging.warning(err)

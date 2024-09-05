@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """RIG Flow."""
 
 import copy
@@ -23,7 +22,6 @@ from data_gemma import base
 from data_gemma import datacommons
 from data_gemma import prompts
 from data_gemma import validate
-
 
 _DC_PATTERN = r'\[__DC__\("([^"]+)"\) --> "([^"]*)"\]?'
 
@@ -49,9 +47,8 @@ class RIGFlow(base.Flow):
     self.options = base.Options(verbose=verbose)
     self.in_context = in_context
     self.validate_dc_responses = validate_dc_responses
-    assert (
-        not self.in_context or self.annotator_llm
-    ), '--in_context requires annotator_llm!'
+    assert (not self.in_context or
+            self.annotator_llm), '--in_context requires annotator_llm!'
 
   def query(
       self,
@@ -66,8 +63,7 @@ class RIGFlow(base.Flow):
         self.options.vlog('... [RIG] Calling LARGE Model for annotation')
         prompt = prompts.RIG_IN_CONTEXT_PROMPT
         llm_resp = self.annotator_llm.query(
-            prompt.format(text=llm_resp.response)
-        )
+            prompt.format(text=llm_resp.response))
         llm_calls.append(llm_resp)
     else:
       self.options.vlog('... [RIG] Calling FINETUNED Model')
@@ -84,9 +80,8 @@ class RIGFlow(base.Flow):
     # Sanity check DC call and response using LLM, and keep only the "good"
     # ones.
     if self.validate_dc_responses:
-      q2resp = validate.run_validation(
-          q2resp, self.llm, self.options, llm_calls
-      )
+      q2resp = validate.run_validation(q2resp, self.llm, self.options,
+                                       llm_calls)
 
     self.options.vlog('... [RIG] Calling DC Evaluate')
     llm_text, footnotes, dc_calls = self._evaluate(llm_text, q2llmval, q2resp)
@@ -111,9 +106,8 @@ class RIGFlow(base.Flow):
       q2llmval.setdefault(match[0], []).append(match[1])
 
     try:
-      q2resp = self.data_fetcher.calln(
-          list(q2llmval.keys()), self.data_fetcher.point
-      )
+      q2resp = self.data_fetcher.calln(list(q2llmval.keys()),
+                                       self.data_fetcher.point)
     except Exception as e:
       logging.warning(e)
       q2resp = {}

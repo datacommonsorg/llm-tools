@@ -166,7 +166,7 @@ class DataCommons:
     query = query.strip().replace(' ', '+')
     url = _BASE_URL.format(env=self.env) + f'?&q={query}&{extra_params}'
     if self.api_key:
-      url = f'{url}&apikey={self.api_key}'
+      url = f'{url}&key={self.api_key}'
     # print(f'DC: Calling {url}')
     return self.session.get(url).json()
 
