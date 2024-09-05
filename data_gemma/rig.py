@@ -102,7 +102,6 @@ class RIGFlow(base.Flow):
     start = time.time()
 
     q2llmval: dict[str, list[str]] = {}
-    print(llm_text)
     for match in re.findall(_DC_PATTERN, llm_text):
       q2llmval.setdefault(match[0], []).append(match[1])
 
