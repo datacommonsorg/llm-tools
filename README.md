@@ -23,3 +23,10 @@ pip install git+https://github.com/datacommonsorg/llm-tools
 For examples of using this library, see our Colab notebooks for [RIG](https://github.com/datacommonsorg/llm-tools/blob/main/notebooks/data_gemma_rig.ipynb)
 and
 [RAG](https://github.com/datacommonsorg/llm-tools/blob/main/notebooks/data_gemma_rag.ipynb).
+
+----------
+Disclaimer
+----------
+You're accessing a very early version of DataGemma. It is meant for trusted tester use (primarily for academic and research use) and not yet ready for commercial or general public use. This version was trained on a very small corpus of examples and may exhibit unintended, and at times controversial or inflammatory behavior. Please anticipate errors and limitations as we actively develop this large language model interface.
+
+Your feedback and evaluations are critical to refining DataGemma's performance and will directly contribute to its training process. Known limitations are detailed in the paper, and we encourage you to consult it for a comprehensive understanding of DataGemma's current capabilities.
