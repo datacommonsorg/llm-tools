@@ -42,7 +42,7 @@ class DataCommons:
       self,
       api_key: str,
       verbose: bool = True,
-      num_threads: int = 10,
+      num_threads: int = 1,
       env: str = 'nl',
       session: requests.Session | None = None,
   ):
