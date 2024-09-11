@@ -43,7 +43,7 @@ class DataCommons:
       api_key: str,
       verbose: bool = True,
       num_threads: int = 10,
-      env: str = 'datagemma',
+      env: str = 'nl',
       session: requests.Session | None = None,
   ):
     self.options = base.Options(verbose=verbose)
