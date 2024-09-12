@@ -6,7 +6,7 @@ in the vast, real-world statistical data of Google's Data Commons.
 
 There are two methodology to achieve this: Retrieval Interleaved Generation
 (RIG) and Retrieval Augmented Generation (RAG). More details can be found in the
-[paper](link) and [blog post](link).
+[paper](https://datacommons.org/link/DataGemmaPaper) and [blog post](link).
 
 The finetuned DataGemma models are hosted in HuggingFace
 ([RIG](https://huggingface.co/google/datagemma-rig-27b-it),
