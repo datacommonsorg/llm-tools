@@ -4,7 +4,7 @@ This repo contains client library code for accessing DataGemma, an
 open model that helps address the challenges of hallucination by grounding LLMs
 in the vast, real-world statistical data of Google's Data Commons.
 
-There are two methodology to achieve this: Retrieval Interleaved Generation
+There are two methodologies used to achieve this: Retrieval Interleaved Generation
 (RIG) and Retrieval Augmented Generation (RAG). More details can be found in the
 [paper](https://datacommons.org/link/DataGemmaPaper) and [blog post](https://research.google/blog/grounding-ai-in-reality-with-a-little-help-from-data-commons/).
 
