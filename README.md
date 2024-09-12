@@ -1,6 +1,6 @@
 # Data Gemma
 
-This repo contains client library code for accessing [DataGemma](paper link), an
+This repo contains client library code for accessing DataGemma, an
 open model that helps address the challenges of hallucination by grounding LLMs
 in the vast, real-world statistical data of Google's Data Commons.
 
