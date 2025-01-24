@@ -18,6 +18,7 @@ from data_gemma import datacommons
 from data_gemma import google_api
 from data_gemma import huggingface_api
 from data_gemma import openai_api
+from data_gemma import vertexai_api
 from data_gemma import rag
 from data_gemma import rig
 
@@ -28,6 +29,7 @@ GoogleAIStudio = google_api.GoogleAIStudio
 HFBasic = huggingface_api.HFBasic
 HFPipeline = huggingface_api.HFPipeline
 OpenAI = openai_api.OpenAI
+VertexAI = vertexai_api.VertexAi
 
 # Data Commons related classes.
 DataCommons = datacommons.DataCommons
