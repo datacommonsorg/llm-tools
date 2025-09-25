@@ -45,7 +45,6 @@ class DataCommons:
       num_threads: int = 1,
       env: str = 'nl',
       session: requests.Session | None = None,
-      headers: dict[str, str] | None = None,
   ):
     self.options = base.Options(verbose=verbose)
     self.num_threads = num_threads
@@ -54,7 +53,6 @@ class DataCommons:
     if not session:
       session = requests.Session()
     self.session = session
-    self.headers = headers
 
   def point(self, query: str) -> base.DataCommonsCall:
     """Calls Data Commons API."""
@@ -170,7 +168,7 @@ class DataCommons:
     if self.api_key:
       url = f'{url}&key={self.api_key}'
     # print(f'DC: Calling {url}')
-    return self.session.get(url, headers=self.headers).json()
+    return self.session.get(url, headers={"x-surface": "datagemma"}).json()
 
 
 def _src(chart: dict[str, Any]) -> str:
