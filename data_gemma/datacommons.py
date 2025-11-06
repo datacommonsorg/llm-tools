@@ -168,7 +168,7 @@ class DataCommons:
     if self.api_key:
       url = f'{url}&key={self.api_key}'
     # print(f'DC: Calling {url}')
-    return self.session.get(url).json()
+    return self.session.get(url, headers={"x-surface": "datagemma"}).json()
 
 
 def _src(chart: dict[str, Any]) -> str:
