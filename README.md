@@ -1,5 +1,7 @@
 # Data Gemma
 
+> ⚠️ **Deprecated (November 2026):** The hosted DataGemma endpoint (`nl.datacommons.org`) and the notebooks in this repo are retired. To connect Gemini and open models to Data Commons today, use the [Data Commons MCP Server](https://docs.datacommons.org/mcp/).
+
 This repo contains client library code for accessing DataGemma, an
 open model that helps address the challenges of hallucination by grounding LLMs
 in the vast, real-world statistical data of Google's Data Commons.
